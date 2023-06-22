@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class JumperPlayer : MonoBehaviour
 {
+    [SerializeField] TMP_Text playerName;
     private float speed = 0.5f;
     private Animator animator;
     private float turnSmoothVelocity = 0.1f;
@@ -11,12 +13,19 @@ public class JumperPlayer : MonoBehaviour
     private Rigidbody rb;
 
     private bool isGround = true;
+    private bool isSliding = false;
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
     }
+
+    private void Start()
+    {
+        playerName.text = UserData.Instance.GerUserName();
+    }
+
     void Update()
     {
         if (!rb.useGravity)
@@ -59,9 +68,10 @@ public class JumperPlayer : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
         }
 
-        if (Input.GetMouseButtonDown(0) && !isGround)
+        if (Input.GetMouseButtonDown(0) && !isGround && !isSliding)
         {
-            rb.AddForce(direction, ForceMode.Impulse);
+            isSliding = true;
+            rb.AddForce(new Vector3(direction.x, 1.0f, direction.y), ForceMode.Impulse);
             Debug.Log("Diving");
         }
 
@@ -73,6 +83,7 @@ public class JumperPlayer : MonoBehaviour
         if(collision.gameObject.GetComponent<BasePlane>())
         {
             isGround = true;
+            isSliding = false;
         }
     }
 

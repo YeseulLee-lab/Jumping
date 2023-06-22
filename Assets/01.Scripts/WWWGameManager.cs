@@ -27,12 +27,11 @@ public class WWWGameManager : MonoBehaviour
     {
         if (instance == null)
             instance = this;
-        //
-        // Time.timeScale = 0;
     }
 
     private void Start()
     {
+        Time.timeScale = 1;
         StartButton.onClick.AddListener(StartGame);
         ReStartButton.onClick.AddListener(RestartGame);
     }

@@ -9,6 +9,7 @@ public class DeadZone : MonoBehaviour
         if(collision.gameObject.GetComponent<JumperPlayer>())
         {
             Debug.Log("Game Over");
+            Time.timeScale = 0;
             WWWGameManager.instance.ShowRestartGame();
         }
     }
