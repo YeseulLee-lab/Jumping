@@ -57,7 +57,7 @@ public class EnemyAi : MonoBehaviour
 
             case SlimeAnimationState.Walk:
 
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk")) return;
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("a")) return;
 
                 agent.isStopped = false;
                 agent.updateRotation = true;

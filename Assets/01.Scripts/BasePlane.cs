@@ -7,10 +7,11 @@ public class BasePlane : MonoBehaviour
 {
     private Coroutine pendulumCor = null;
     private Sequence triggerSqc = null;
+
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("other = " + collision.gameObject.name);
-
+        this.transform.DOLocalMoveY(-0.025f, 0.1f);
         StartPendulum();
     }
 
@@ -30,10 +31,11 @@ public class BasePlane : MonoBehaviour
 
     IEnumerator PendulumCor()
     {
+        yield return new WaitForSeconds(0.25f);
         triggerSqc = DOTween.Sequence();
-        triggerSqc.Append(this.transform.DOLocalMoveY(0.01f, 0.1f).SetLoops(-1, LoopType.Yoyo));
+        triggerSqc.Append(this.transform.DOLocalMoveY(0.0f, 0.075f).SetLoops(-1, LoopType.Yoyo));
 
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.5f);
 
         if (triggerSqc.IsActive())
             triggerSqc.Kill();
