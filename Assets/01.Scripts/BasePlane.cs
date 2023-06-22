@@ -7,10 +7,16 @@ public class BasePlane : MonoBehaviour
 {
     private Coroutine pendulumCor = null;
     private Sequence triggerSqc = null;
+    [SerializeField] Material[] mat;
 
+    private void Start()
+    {
+        this.GetComponent<MeshRenderer>().material = mat[0];
+    }
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("other = " + collision.gameObject.name);
+        this.GetComponent<MeshRenderer>().material = mat[1];
         this.transform.DOLocalMoveY(-0.025f, 0.1f);
         StartPendulum();
     }
