@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class JumperPlayer : MonoBehaviour
 {
+    [SerializeField] TMP_Text playerName;
     private float speed = 0.5f;
     private Animator animator;
     private float turnSmoothVelocity = 0.1f;
@@ -11,21 +13,32 @@ public class JumperPlayer : MonoBehaviour
     private Rigidbody rb;
 
     private bool isGround = true;
+    private bool isSliding = false;
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
     }
+
+    private void Start()
+    {
+        playerName.text = UserData.Instance.GerUserName();
+    }
+
     void Update()
     {
+        if (!rb.useGravity)
+            return;
+
         if(Input.GetKeyDown(KeyCode.Space))
         {
             if (!isGround)
                 return;
-
-            isGround = false;
             rb.AddForce(new Vector3(0,2,0), ForceMode.Impulse);
+            isGround = false;
         }
+
         if (Input.GetKey(KeyCode.D))
         {
             transform.position += Vector3.right * speed * Time.deltaTime;
@@ -45,15 +58,24 @@ public class JumperPlayer : MonoBehaviour
 
         float hAxis = Input.GetAxisRaw("Horizontal");
         float vAxis = Input.GetAxisRaw("Vertical");
-        
+
         Vector3 direction = new Vector3(hAxis, 0f, vAxis).normalized;
-        
+
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
         }
+
+        if (Input.GetMouseButtonDown(0) && !isGround && !isSliding)
+        {
+            isSliding = true;
+            rb.AddForce(new Vector3(direction.x, 1.0f, direction.y), ForceMode.Impulse);
+            Debug.Log("Diving");
+        }
+
+       
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -61,6 +83,13 @@ public class JumperPlayer : MonoBehaviour
         if(collision.gameObject.GetComponent<BasePlane>())
         {
             isGround = true;
+            isSliding = false;
         }
+    }
+
+
+    public void SetGravity()
+    {
+        rb.useGravity = true;
     }
 }
